@@ -1,7 +1,7 @@
 import { useForm, type FieldValues } from "react-hook-form";
 
 function ReactHookForm() {
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit, formState : {errors} } = useForm();
     
     const onSubmit = (data:FieldValues)=>console.log(data);
 
@@ -9,7 +9,9 @@ function ReactHookForm() {
 
         <div className="mb-3">
             <label htmlFor="name" className="form-label">Name</label>
-            <input {...register('name')} id="name" type="text" className="form-control" />
+            <input {...register('name', {required: true, minLength:4})} id="name" type="text" className="form-control" />
+            {errors.name?.type === "required" && <p style={{color:"red"}}> Name is required</p>}
+            {errors.name?.type === "minLength" && <p style={{color:"red"}}> Name must be at least 4 characters long</p>}
         </div>
 
         <div className="mb-3">

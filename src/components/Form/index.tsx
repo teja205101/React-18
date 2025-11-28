@@ -1,4 +1,4 @@
-import React, { type FormEvent, useRef } from 'react'
+import { type FormEvent, useRef } from 'react'
 
 export default function Form() {
 

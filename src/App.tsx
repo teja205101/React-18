@@ -1,12 +1,13 @@
 import Message from './components/Message/Message';
-import Form from './components/Form/index';
+// import Form from './components/Form/Form';
+import ReactHookForm from './components/Form/ReactHookForm';
 
 function App() {
 
   return (
     <>
       <Message/>
-      <Form/>
+      <ReactHookForm/>
     </>
     )
 }

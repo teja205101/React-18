@@ -1,7 +1,7 @@
 import { useForm, type FieldValues } from "react-hook-form";
 
 function ReactHookForm() {
-    const { register, handleSubmit, formState : {errors} } = useForm();
+    const { register, handleSubmit, formState : {errors, isValid} } = useForm();
     
     const onSubmit = (data:FieldValues)=>console.log(data);
 
@@ -64,7 +64,7 @@ function ReactHookForm() {
             <input {...register('email')} id="email" type="email" className="form-control" />
         </div>
 
-        <button className="btn btn-primary" type="submit">Submit</button>
+        <button disabled={!isValid} className="btn btn-primary" type="submit">Submit</button>
 
     </form>
     );

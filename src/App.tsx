@@ -4,9 +4,13 @@
 // import ReactHookForm from './components/Form/ReactHookForm';
 import ExpenseList from './expense-tracker/components/ExpenseList';
 import { useState } from 'react';
+import ExpenseFilter from './expense-tracker/components/ExpenseFilter';
+
+
 
 function App() {
 
+    const [selectedCategory, setSelectedCategory] = useState('');
     const [expenses, setExpenses] = useState([
         { id: 1, description: 'Milk', amount: 5, category: 'Grocery' },
         { id: 2, description: 'Bread', amount: 3, category: 'Grocery' },
@@ -35,13 +39,17 @@ function App() {
         setExpenses(expenses.filter((expense) => expense.id !== id));
     }
 
+    const visibleExpenses = selectedCategory ? expenses.filter((expense) => expense.category === selectedCategory) : expenses;
+
   return (
     <>
       {/* <Message/> */}
       {/* <ZodForm/> */}
       {/* <Form/> */}
       {/* <ReactHookForm/> */}
-      <ExpenseList expenses={expenses} onDelete={handleDelete}/>
+      <ExpenseFilter onSelectCategory={(category) => setSelectedCategory(category)}/>
+      <div className="mb-3"></div>
+      <ExpenseList expenses={visibleExpenses} onDelete={handleDelete}/>
     </>
     )
 }

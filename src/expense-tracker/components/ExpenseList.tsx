@@ -13,6 +13,9 @@ interface ExpenseListProps {
 }
 
 const ExpenseList = ({ expenses, onDelete }: ExpenseListProps) => {
+    if (expenses.length === 0) {
+        return <h1>No expenses found</h1>;
+    }
     return (
         <div>
             <table className="table table-bordered">

@@ -3,14 +3,23 @@
 // import Form from './components/Form/Form';
 // import ReactHookForm from './components/Form/ReactHookForm';
 // import ExpenseList from './expense-tracker/components/ExpenseList';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // import ExpenseFilter from './expense-tracker/components/ExpenseFilter';
 // import ExpenseForm from './expense-tracker/components/ExpenseForm';
 
 // Product Component 
-import ProductList from './expense-tracker/components/ProductList';
+// import ProductList from './expense-tracker/components/ProductList';
+
+// Axios
+import axios from 'axios';
 
 // export const Categories = ['Grocery', 'Stationary', 'Medical'] as const ;
+
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+}
 
 function App() {
 
@@ -47,9 +56,14 @@ function App() {
 
 
     {/* Product Component */}
-    const [ category,setCategory ] = useState('')
+    // const [ category,setCategory ] = useState('')
 
+   const [ posts, setPosts] = useState<Post[]>([])
 
+    useEffect(()=>{
+      axios.get<Post[]>("https://jsonplaceholder.typicode.com/posts").
+      then((response: any)=>setPosts(response.data))
+    },[])
   return (
     <>
       {/* <Message/> */}
@@ -65,13 +79,22 @@ function App() {
       <ExpenseList expenses={visibleExpenses} onDelete={handleDelete}/> */}
 
       {/* Product Component */}
-      <select className="form-select" onChange={(event)=>setCategory(event.target.value)} value={category}>
+      {/* <select className="form-select" onChange={(event)=>setCategory(event.target.value)} value={category}>
         <option value="">Select Product</option>
         <option value="clothes">Clothes</option>
         <option value="shoes">Shoes</option>
         <option value="watches">Watches</option>
       </select>
-      <ProductList category={category}/>  
+      <ProductList category={category}/>   */}
+
+
+      {/* Axios */}
+      {posts.map((post)=>(
+        <div key={post.id}>
+          <h2>{post.title}</h2>
+          <p>{post.body}</p>
+        </div>
+      ))}
     </>
     )
 }

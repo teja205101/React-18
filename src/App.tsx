@@ -5,8 +5,9 @@
 import ExpenseList from './expense-tracker/components/ExpenseList';
 import { useState } from 'react';
 import ExpenseFilter from './expense-tracker/components/ExpenseFilter';
+import ExpenseForm from './expense-tracker/components/ExpenseForm';
 
-
+// export const Categories = ['Grocery', 'Stationary', 'Medical'] as const ;
 
 function App() {
 
@@ -47,6 +48,8 @@ function App() {
       {/* <ZodForm/> */}
       {/* <Form/> */}
       {/* <ReactHookForm/> */}
+      <ExpenseForm onSubmit={(expense)=>setExpenses([...expenses,{...expense,id:expenses.length+1}])}/>
+      <div className="mb-3"></div>  
       <ExpenseFilter onSelectCategory={(category) => setSelectedCategory(category)}/>
       <div className="mb-3"></div>
       <ExpenseList expenses={visibleExpenses} onDelete={handleDelete}/>

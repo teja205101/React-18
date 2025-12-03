@@ -1,0 +1,1 @@
+export const Categories = ['Grocery', 'Stationary', 'Medical'] as const ;

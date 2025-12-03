@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { Categories } from "../categories";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useRef } from 'react';
 
 interface ExpenseFormProps {
     onSubmit: (data: any) => void;
@@ -13,19 +14,26 @@ const schema = z.object ({
     category : z.enum(Categories,{errorMap: ()=>({ message:
         "Select a category."
     })})
-})
+});
 
-type ExpenseFormData =z.infer<typeof schema>
+type ExpenseFormData = z.infer<typeof schema>;
 
 function ExpenseForm({onSubmit}:ExpenseFormProps) {
-    const { register, handleSubmit, formState:{errors}}=useForm<ExpenseFormData>({resolver:zodResolver(schema)})
+    const { register, handleSubmit, formState:{errors}}=useForm<ExpenseFormData>({resolver:zodResolver(schema)});
+
+    const descriptionRef=useRef<HTMLInputElement>(null);
+    useEffect(()=>{
+        descriptionRef.current?.focus();
+        console.log(descriptionRef.current?.value);
+    },[descriptionRef.current?.value])
+
     return (
         <div>
             <h2>Add Expense</h2>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-3">
                     <label htmlFor="description" className="form-label">Description</label>
-                    <input {...register("description")} type="text" className="form-control" id="description" />
+                    <input {...register("description")} ref={descriptionRef} type="text" className="form-control" id="description" />
                     {errors.description && <p className="text-danger">{errors.description.message}</p>}
                 </div>
                 <div className="mb-3">

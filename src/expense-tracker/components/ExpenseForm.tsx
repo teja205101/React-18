@@ -25,7 +25,11 @@ function ExpenseForm({onSubmit}:ExpenseFormProps) {
     useEffect(()=>{
         descriptionRef.current?.focus();
         console.log(descriptionRef.current?.value);
-    },[descriptionRef.current?.value])
+    },[])
+
+    useEffect(()=>{
+        document.title="Add Expense";
+    })
 
     return (
         <div>

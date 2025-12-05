@@ -11,7 +11,7 @@ import { useState, useEffect } from 'react';
 // import ProductList from './expense-tracker/components/ProductList';
 
 // Axios
-import axios from 'axios';
+import axios, { AxiosError, CanceledError } from 'axios';
 
 // export const Categories = ['Grocery', 'Stationary', 'Medical'] as const ;
 
@@ -60,9 +60,29 @@ function App() {
 
    const [ posts, setPosts] = useState<Post[]>([])
 
+   const [error, setError] = useState("")
+
+   const [loading, setLoading] = useState(false);
+
     useEffect(()=>{
-      axios.get<Post[]>("https://jsonplaceholder.typicode.com/posts").
-      then((response: any)=>setPosts(response.data))
+
+      const controller = new AbortController();
+      setLoading(true)
+      const fetchPosts = async () => {
+        try {
+          setLoading(true);
+          const response = await axios.get<Post[]>("https://jsonplaceholder.typicode.com/posts",{ signal : controller.signal});
+          setPosts(response.data);
+          setLoading(false);
+        } catch (error) {
+          if( error instanceof CanceledError ) return;
+          setError((error as AxiosError).message);
+          setLoading(false);
+        }
+      }
+
+      fetchPosts()
+      return () => controller.abort();
     },[])
   return (
     <>
@@ -89,6 +109,8 @@ function App() {
 
 
       {/* Axios */}
+      {loading && <div className="spinner-border"></div>}
+      {error && <p className="text-danger">{error}</p>}
       {posts.map((post)=>(
         <div key={post.id}>
           <h2>{post.title}</h2>

@@ -11,7 +11,8 @@ import { useState, useEffect } from 'react';
 // import ProductList from './expense-tracker/components/ProductList';
 
 // Axios
-import axios, { AxiosError, CanceledError } from 'axios';
+// import axios, { AxiosError, CanceledError } from 'axios';
+import apiClient, { AxiosError, CanceledError } from './services/api-client';
 
 // export const Categories = ['Grocery', 'Stationary', 'Medical'] as const ;
 
@@ -73,7 +74,7 @@ function App() {
       const fetchPosts = async () => {
         try {
           setLoading(true);
-          const response = await axios.get<Post[]>("https://jsonplaceholder.typicode.com/posts",{ signal : controller.signal});
+          const response = await apiClient.get<Post[]>("/posts",{ signal : controller.signal});
           setPosts(response.data);
           setLoading(false);
         } catch (error) {
@@ -91,7 +92,7 @@ function App() {
       setPosts(posts.filter((post)=>post.id !== id));
       const originalPosts = [...posts];
 
-      axios.delete(`https://jsonplaceholder.typicode.com/posts/${id}`)
+      apiClient.delete(`/posts/${id}`)
       .then(()=>console.log(`Post deleted of ${id}`))
       .catch((error)=>{
         console.log(error);
@@ -105,7 +106,7 @@ function App() {
       const newPost = { id :0,title : "New Post ", body : "New Post", userId : 1}
       setPosts([newPost,...posts])
 
-      axios.post("https://jsonplaceholder.typicode.com/posts",newPost)
+      apiClient.post("/posts",newPost)
       .then(({data : savedPost})=>  setPosts([savedPost,...posts]))
       .catch((error)=>{console.log(error);
       setPosts(originalPosts);
@@ -117,7 +118,7 @@ function App() {
       if(!updatedPost) return;
       setPosts(updatedPost);
       
-      axios.patch(`https://jsonplaceholder.typicode.com/xposts/${id}`,{title : updatedPost})
+      apiClient.patch(`/posts/${id}`,{title : updatedPost})
       .then(()=>console.log(`Post updated of ${id}`))
       .catch((error)=>{ 
         console.log(error);

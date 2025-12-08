@@ -67,6 +67,8 @@ function App() {
     useEffect(()=>{
 
       const controller = new AbortController();
+
+
       setLoading(true)
       const fetchPosts = async () => {
         try {
@@ -84,6 +86,45 @@ function App() {
       fetchPosts()
       return () => controller.abort();
     },[])
+
+    const handleDelete =(id : number)=>{
+      setPosts(posts.filter((post)=>post.id !== id));
+      const originalPosts = [...posts];
+
+      axios.delete(`https://jsonplaceholder.typicode.com/posts/${id}`)
+      .then(()=>console.log(`Post deleted of ${id}`))
+      .catch((error)=>{
+        console.log(error);
+        setPosts(originalPosts);   
+      })
+    }
+
+    const handleAddPost = () => {
+      const originalPosts = [...posts];
+      console.log("Add Post button clciked ...")
+      const newPost = { id :0,title : "New Post ", body : "New Post", userId : 1}
+      setPosts([newPost,...posts])
+
+      axios.post("https://jsonplaceholder.typicode.com/posts",newPost)
+      .then(({data : savedPost})=>  setPosts([savedPost,...posts]))
+      .catch((error)=>{console.log(error);
+      setPosts(originalPosts);
+      })
+    }
+
+    const handleUpdatePost = (id: number) => {
+      const updatedPost = posts.map(post=>post.id === id ? {...post,title : post.title + " Updated"} : post);
+      if(!updatedPost) return;
+      setPosts(updatedPost);
+      
+      axios.patch(`https://jsonplaceholder.typicode.com/xposts/${id}`,{title : updatedPost})
+      .then(()=>console.log(`Post updated of ${id}`))
+      .catch((error)=>{ 
+        console.log(error);
+        setPosts(updatedPost);   
+      })
+    } 
+
   return (
     <>
       {/* <Message/> */}
@@ -111,11 +152,16 @@ function App() {
       {/* Axios */}
       {loading && <div className="spinner-border"></div>}
       {error && <p className="text-danger">{error}</p>}
+      <button className="btn-primary mb-3" onClick={handleAddPost}>Add Post</button>
       {posts.map((post)=>(
-        <div key={post.id}>
-          <h2>{post.title}</h2>
-          <p>{post.body}</p>
-        </div>
+        <ul key={post.title} className="list-gro">
+          <li className="list-group-item d-flex justify-content-between" >{post.title}
+            <div>
+            <button className="primary mx-1" onClick={()=>handleUpdatePost(post.id)}> Update </button>
+            <button className="text-danger mx-1" onClick={()=> handleDelete(post.id)}> Delete </button>
+            </div>
+          </li>
+        </ul>
       ))}
     </>
     )

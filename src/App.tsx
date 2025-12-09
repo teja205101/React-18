@@ -13,14 +13,11 @@ import { useState, useEffect } from 'react';
 // Axios
 // import axios, { AxiosError, CanceledError } from 'axios';
 import apiClient, { AxiosError, CanceledError } from './services/api-client';
+import PostService, { type Post } from './services/user-service';
 
 // export const Categories = ['Grocery', 'Stationary', 'Medical'] as const ;
 
-interface Post {
-  id: number;
-  title: string;
-  body: string;
-}
+
 
 function App() {
 
@@ -67,25 +64,21 @@ function App() {
 
     useEffect(()=>{
 
-      const controller = new AbortController();
+      setLoading(true);
+      const { request, cancel } = PostService.getAllPosts(); 
 
-
-      setLoading(true)
-      const fetchPosts = async () => {
-        try {
-          setLoading(true);
-          const response = await apiClient.get<Post[]>("/posts",{ signal : controller.signal});
-          setPosts(response.data);
+      request
+        .then(({ data: posts }) => {
+          setPosts(posts);
           setLoading(false);
-        } catch (error) {
-          if( error instanceof CanceledError ) return;
+        })
+        .catch((error) => {
+          if (error instanceof CanceledError) return;
           setError((error as AxiosError).message);
           setLoading(false);
-        }
-      }
+        });
 
-      fetchPosts()
-      return () => controller.abort();
+      return () => cancel();
     },[])
 
     const handleDelete =(id : number)=>{

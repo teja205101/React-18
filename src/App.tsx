@@ -46,7 +46,7 @@ function App() {
     // ]);
 
     // const handleDelete = (id: number) => {
-    //     console.log(id);
+    //     // console.log(id);
     //     setExpenses(expenses.filter((expense) => expense.id !== id));
     // }
 
@@ -61,6 +61,8 @@ function App() {
    const [error, setError] = useState("")
 
    const [loading, setLoading] = useState(false);
+
+   let updatedPostsLength = posts.length;
 
     useEffect(()=>{
 
@@ -81,12 +83,19 @@ function App() {
       return () => cancel();
     },[])
 
+    useEffect(()=>{
+      let updatedPostsLength = posts.length;
+      // console.log(`Use Effect called ... and post length is : ${updatedPostsLength}`);
+    },[posts]);
+
     const handleDelete =(id : number)=>{
+      // console.log(`Post deleted button clicked of ${id}`);
       setPosts(posts.filter((post)=>post.id !== id));
       const originalPosts = [...posts];
 
-      apiClient.delete(`/posts/${id}`)
-      .then(()=>console.log(`Post deleted of ${id}`))
+      // apiClient.delete(`/posts/${id}`)
+      PostService.deletePost(id)
+      .then(()=> console.log(`Post deleted of ${id}`))
       .catch((error)=>{
         console.log(error);
         setPosts(originalPosts);   
@@ -95,13 +104,15 @@ function App() {
 
     const handleAddPost = () => {
       const originalPosts = [...posts];
-      console.log("Add Post button clciked ...")
-      const newPost = { id :0,title : "New Post ", body : "New Post", userId : 1}
+      // console.log("Add Post button clciked ...")
+      // console.log('Post length in handle add post',updatedPostsLength + 1);
+      const newPost = { id :updatedPostsLength + 1,title : "New Post ", body : "New Post", userId : 1}
       setPosts([newPost,...posts])
 
-      apiClient.post("/posts",newPost)
+      PostService.addPost(newPost)
       .then(({data : savedPost})=>  setPosts([savedPost,...posts]))
-      .catch((error)=>{console.log(error);
+      .catch((error)=>{
+        console.log(error);
       setPosts(originalPosts);
       })
     }
@@ -111,10 +122,10 @@ function App() {
       if(!updatedPost) return;
       setPosts(updatedPost);
       
-      apiClient.patch(`/posts/${id}`,{title : updatedPost})
+      PostService.updatePost(id,updatedPost)
       .then(()=>console.log(`Post updated of ${id}`))
       .catch((error)=>{ 
-        console.log(error);
+         console.log(error);
         setPosts(updatedPost);   
       })
     } 
@@ -148,7 +159,7 @@ function App() {
       {error && <p className="text-danger">{error}</p>}
       <button className="btn-primary mb-3" onClick={handleAddPost}>Add Post</button>
       {posts.map((post)=>(
-        <ul key={post.title} className="list-gro">
+        <ul key={post.id} className="list-gro">
           <li className="list-group-item d-flex justify-content-between" >{post.title}
             <div>
             <button className="primary mx-1" onClick={()=>handleUpdatePost(post.id)}> Update </button>

@@ -17,6 +17,7 @@ import PostService, { type Post } from './services/post-service';
 
 // export const Categories = ['Grocery', 'Stationary', 'Medical'] as const ;
 
+import usePosts  from './hooks/usePosts';
 
 
 function App() {
@@ -56,32 +57,7 @@ function App() {
     {/* Product Component */}
     // const [ category,setCategory ] = useState('')
 
-   const [ posts, setPosts] = useState<Post[]>([])
-
-   const [error, setError] = useState("")
-
-   const [loading, setLoading] = useState(false);
-
-   let updatedPostsLength = posts.length;
-
-    useEffect(()=>{
-
-      setLoading(true);
-      const { request, cancel } = PostService.getAll<Post>(); 
-
-      request
-        .then(({ data: posts }) => {
-          setPosts(posts);
-          setLoading(false);
-        })
-        .catch((error) => {
-          if (error instanceof CanceledError) return;
-          setError((error as AxiosError).message);
-          setLoading(false);
-        });
-
-      return () => cancel();
-    },[])
+    const {posts,error,loading,setPosts} = usePosts();
 
     const handleDelete =(id : number)=>{
       // console.log(`Post deleted button clicked of ${id}`);
@@ -93,9 +69,11 @@ function App() {
       .catch((error)=>{
         console.log(error);
         setPosts(originalPosts);   
-      })
+      }) 
     }
 
+    let updatedPostsLength = posts.length;
+    
     const handleAddPost = () => {
       const originalPosts = [...posts];
       // console.log("Add Post button clciked ...")

@@ -67,7 +67,7 @@ function App() {
     useEffect(()=>{
 
       setLoading(true);
-      const { request, cancel } = PostService.getAllPosts(); 
+      const { request, cancel } = PostService.getAll<Post>(); 
 
       request
         .then(({ data: posts }) => {
@@ -83,17 +83,12 @@ function App() {
       return () => cancel();
     },[])
 
-    useEffect(()=>{
-      let updatedPostsLength = posts.length;
-      // console.log(`Use Effect called ... and post length is : ${updatedPostsLength}`);
-    },[posts]);
-
     const handleDelete =(id : number)=>{
       // console.log(`Post deleted button clicked of ${id}`);
       setPosts(posts.filter((post)=>post.id !== id));
       const originalPosts = [...posts];
 
-      PostService.deletePost(id)
+      PostService.delete(id)
       .then(()=> console.log(`Post deleted of ${id}`))
       .catch((error)=>{
         console.log(error);
@@ -108,7 +103,7 @@ function App() {
       const newPost = { id :updatedPostsLength + 1,title : "New Post ", body : "New Post", userId : 1}
       setPosts([newPost,...posts])
 
-      PostService.addPost(newPost)
+      PostService.add(newPost)
       .then(({data : savedPost})=>  setPosts([savedPost,...posts]))
       .catch((error)=>{
         console.log(error);
@@ -121,7 +116,7 @@ function App() {
       if(!updatedPost) return;
       setPosts(updatedPost);
       
-      PostService.updatePost(id,updatedPost)
+      PostService.update(posts[id])
       .then(()=>console.log(`Post updated of ${id}`))
       .catch((error)=>{ 
          console.log(error);

@@ -12,8 +12,8 @@ import { useState, useEffect } from 'react';
 
 // Axios
 // import axios, { AxiosError, CanceledError } from 'axios';
-import apiClient, { AxiosError, CanceledError } from './services/api-client';
-import PostService, { type Post } from './services/user-service';
+import { AxiosError, CanceledError } from './services/api-client';
+import PostService, { type Post } from './services/post-service';
 
 // export const Categories = ['Grocery', 'Stationary', 'Medical'] as const ;
 
@@ -93,7 +93,6 @@ function App() {
       setPosts(posts.filter((post)=>post.id !== id));
       const originalPosts = [...posts];
 
-      // apiClient.delete(`/posts/${id}`)
       PostService.deletePost(id)
       .then(()=> console.log(`Post deleted of ${id}`))
       .catch((error)=>{
